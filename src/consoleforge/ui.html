@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ConsoleForge</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+<style>
+:root{--bg:#f4f5f8;--panel:#fff;--panel2:#f0f2f7;--line:#dfe3ec;--tx:#1b1f2a;--mut:#6b7385;--acc:#4f6df5;--acc-tx:#fff;--ok:#12a36b;--warn:#c98200;--bad:#e5384f;--shadow:0 8px 30px rgba(20,30,60,.12)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1015;--panel:#161920;--panel2:#1d212b;--line:#272c38;--tx:#e8ebf2;--mut:#8a92a5;--acc:#6f8cff;--acc-tx:#0b0e18;--ok:#3ecf8e;--warn:#f5a524;--bad:#ff6577;--shadow:0 8px 30px rgba(0,0,0,.5)}}
+:root[data-theme="dark"]{--bg:#0e1015;--panel:#161920;--panel2:#1d212b;--line:#272c38;--tx:#e8ebf2;--mut:#8a92a5;--acc:#6f8cff;--acc-tx:#0b0e18;--ok:#3ecf8e;--warn:#f5a524;--bad:#ff6577;--shadow:0 8px 30px rgba(0,0,0,.5)}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;display:flex;flex-direction:column;overflow:hidden}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--panel2);border-radius:8px;padding:7px 12px}
+button:hover{border-color:var(--acc)}button:disabled{opacity:.45;cursor:not-allowed}
+.pri{background:var(--acc);color:var(--acc-tx);border-color:var(--acc);font-weight:600}
+.ghost{background:transparent}
+input[type=text],input[type=password]{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+input:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+header{display:flex;align-items:center;gap:16px;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--panel)}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px}
+.logo svg{width:26px;height:26px}
+.logo small{color:var(--mut);font-weight:500}
+.seg{display:inline-flex;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:5px 12px;border-radius:7px;color:var(--mut)}
+.seg button.on{background:var(--panel);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.18);font-weight:600}
+.sp{flex:1}
+main{flex:1;min-height:0;display:grid;grid-template-columns:1fr 340px;gap:14px;padding:14px 18px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-height:0}
+.card>h3{margin:0;padding:12px 16px;font-size:12px;letter-spacing:.8px;text-transform:uppercase;color:var(--mut);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.card .body{padding:12px 16px;overflow:auto;min-height:0;flex:1}
+.tools{display:flex;gap:8px;margin-left:auto}
+.empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;color:var(--mut);border:2px dashed var(--line);border-radius:12px;padding:24px}
+.empty b{color:var(--tx);font-size:16px}
+.row{display:grid;grid-template-columns:54px 1fr auto 28px;gap:12px;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.badge{font-size:11px;font-weight:700;text-align:center;border-radius:7px;padding:5px 0;color:#fff;background:#7c8398}
+.b-PS2{background:#3b6cff}.b-PS1{background:#8a7fb8}.b-PSP{background:#14a89a}.b-Wii{background:#1aa3e8}.b-GameCube{background:#8c62ee}
+.nm{min-width:0}.nm b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.nm span{color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.bar{height:6px;border-radius:4px;background:var(--panel2);overflow:hidden;margin-top:6px}
+.bar[hidden]{display:none}.row.ok .bar i{background:var(--ok)}.wn{color:var(--warn);font-style:normal}
+.bar i{display:block;height:100%;width:0;background:var(--acc);transition:width .25s}
+.st{font-size:12px;text-align:right;min-width:120px;color:var(--mut)}
+.st.ok{color:var(--ok)}.st.err{color:var(--bad)}.st.run{color:var(--acc)}
+.x{border:0;background:transparent;color:var(--mut);padding:2px 8px;font-size:18px;line-height:1}
+.fmts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fmt{text-align:left;padding:10px;border-radius:10px;position:relative}
+.fmt b{display:block}.fmt span{font-size:11px;color:var(--mut)}
+.fmt.on{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,var(--panel))}
+.fmt.sug::after{content:"suggested";position:absolute;top:6px;right:8px;font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:var(--ok)}
+label.f{display:block;margin:12px 0 5px;font-size:12px;color:var(--mut)}
+.chk{display:flex;align-items:center;gap:8px;margin:8px 0;cursor:pointer}
+.chk input{accent-color:var(--acc);width:16px;height:16px}
+.note{font-size:12px;color:var(--mut);margin-top:6px}
+.actions{padding:12px 16px;border-top:1px solid var(--line);display:flex;gap:8px}
+.actions .pri{flex:1;padding:10px}
+.ov{height:3px;background:var(--panel2)}.ov i{display:block;height:100%;width:0;background:var(--ok);transition:width .3s}
+footer{border-top:1px solid var(--line);background:var(--panel);max-height:34vh;display:flex;flex-direction:column}
+footer summary{padding:8px 18px;cursor:pointer;color:var(--mut);font-size:12px;letter-spacing:.6px;text-transform:uppercase;display:flex;justify-content:space-between}
+#log{margin:0;padding:6px 18px 12px;overflow:auto;height:92px;font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--mut);white-space:pre-wrap}
+#log .w{color:var(--warn)}#log .e{color:var(--bad)}
+.modal{position:fixed;inset:0;background:rgba(5,8,15,.55);display:none;align-items:center;justify-content:center;padding:18px;z-index:5}
+.modal.show{display:flex}
+.dlg{width:min(680px,100%);height:min(560px,100%);background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.dlg .top{display:flex;gap:8px;padding:12px}
+.ls{flex:1;overflow:auto;border-block:1px solid var(--line)}
+.it{display:flex;align-items:center;gap:10px;padding:7px 14px;cursor:pointer}
+.it:hover{background:var(--panel2)}.it .ic{width:20px;text-align:center}.it .sz{margin-left:auto;color:var(--mut);font-size:12px}
+.it .pl{font-size:10px;font-weight:700;color:var(--mut);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+.dlg .bot{display:flex;gap:8px;padding:12px;align-items:center}
+@media (max-width:860px){main{grid-template-columns:1fr;overflow:auto}.card{min-height:320px}.row{grid-template-columns:46px 1fr 28px}.st{grid-column:2/4;text-align:left}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 2 28 9v14L16 30 4 23V9z" stroke="var(--acc)" stroke-width="2.2"/><path d="M10 13l6 3.5L22 13M16 16.5V24" stroke="var(--acc)" stroke-width="2.2" stroke-linecap="round"/></svg>ConsoleForge <small id="ver">v0.3</small></div>
+  <div class="seg" id="modes"></div>
+  <div class="sp"></div>
+  <span id="demo" class="note" hidden>Preview mode · simulated data</span>
+  <button id="quit" class="ghost" title="Stop the local server and close">Quit</button>
+</header>
+<main>
+  <section class="card">
+    <h3>Queue <span id="cnt"></span><div class="tools"><button id="addf">+ Files</button><button id="addd">+ Folder</button><button id="clr" class="ghost">Clear</button></div></h3>
+    <div class="body" id="queue"></div>
+    <div class="ov"><i id="ovb"></i></div>
+  </section>
+  <aside class="card">
+    <h3 id="sh">Convert to</h3>
+    <div class="body" id="side"></div>
+    <div class="actions"><button class="pri" id="go">Start</button><button id="stop" disabled>Cancel</button></div>
+  </aside>
+</main>
+<footer><details open><summary><span>Activity log</span><span id="stat">Idle</span></summary><pre id="log"></pre></details></footer>
+<div class="modal" id="modal"><div class="dlg">
+  <div class="top"><button id="up" title="Parent folder">↑</button><input type="text" id="path" spellcheck="false"><button id="goto">Go</button></div>
+  <div class="ls" id="ls"></div>
+  <div class="bot"><span class="note" id="sel">0 selected</span><span class="sp" style="flex:1"></span><button id="cx" class="ghost">Cancel</button><button id="ok" class="pri">Add selected</button></div>
+</div></div>
+<script>
+const TOKEN="__TOKEN__", DEMO=TOKEN.startsWith("__"), $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const FMT={chd:["CHD","CD · DVD · GD-ROM"],cso:["CSO","PSP · PS2"],zso:["ZSO","PS2 OPL · LZ4"],gcz:["GCZ","GameCube · Wii"],wbfs:["WBFS","Wii USB loaders"]};
+const SUG={Wii:["wbfs","gcz"],GameCube:["gcz"],PSP:["cso","zso"],PS2:["cso","zso","chd"],PS1:["chd"]};
+const MODES={convert:"Convert",extract:"Extract",verify:"Verify",info:"Info"};
+const S={mode:"convert",target:"cso",files:[],jobs:{},running:false,seen:0,o:{level:9,wbfs:"auto",split:false,iso:"auto",key:"",out:"",force:false,verify:true}};
+let B={path:"",sel:new Set(),entries:[]};
+async function api(p,b){const r=await fetch("/api/"+p+(p.includes("?")?"&":"?")+"t="+TOKEN,b?{method:"POST",body:JSON.stringify(b)}:{});if(!r.ok)throw new Error((await r.json().catch(()=>({}))).error||r.status);return r.json()}
+const human=n=>{for(const u of["B","KB","MB","GB"]){if(n<1024||u=="GB")return(u=="B"?n:n.toFixed(1))+" "+u;n/=1024}};
+const log=(m,c="")=>{const l=$("#log");l.insertAdjacentHTML("beforeend",`<span class="${c}">${esc(m)}</span>\n`);l.scrollTop=l.scrollHeight};
+function renderModes(){$("#modes").innerHTML=Object.entries(MODES).map(([k,v])=>`<button class="${S.mode==k?"on":""}" data-m="${k}">${v}</button>`).join("");$("#modes").onclick=e=>{const m=e.target.dataset.m;if(m&&!S.running){S.mode=m;renderAll()}}}
+function renderQueue(){const q=$("#queue");$("#cnt").textContent=S.files.length?`· ${S.files.length}`:"";
+ if(!S.files.length){q.innerHTML=`<div class="empty"><b>Drop in a disc image</b><span>ISO, CUE, GDI, CSO, ZSO, GCZ, WBFS or CHD.<br>Platforms are detected automatically.</span><button class="pri" id="e1">Browse files…</button></div>`;$("#e1").onclick=()=>openBrowser();return}
+ q.innerHTML=S.files.map((f,i)=>{const j=S.jobs[f.path]||{},cls=j.state=="done"?"ok":j.state=="error"?"err":j.state=="running"?"run":"";
+  const plat=(f.plat||"?").split(" ")[0],sg=SUG[plat],t=S.mode!="convert"?"":(sg&&!sg.includes(S.target)?`<em class="wn">⚠ unusual for ${esc(plat)}</em>`:`→ ${FMT[S.target][0]}`);
+  return`<div class="row ${cls}"><div class="badge b-${esc(plat)}">${plat=="GameCube"?"GC":esc(plat.slice(0,5).toUpperCase())}</div><div class="nm"><b title="${esc(f.path)}">${esc(f.name)}</b><span>${esc(f.path.replace(/[\\/][^\\/]*$/,"")||"/")} · ${human(f.size||0)} ${t}</span><div class="bar" ${j.frac?"":"hidden"}><i style="width:${(j.frac||0)*100}%"></i></div></div><div class="st ${cls}">${esc(j.msg||"Queued")}</div><button class="x" data-i="${i}" ${S.running?"disabled":""} title="Remove">×</button></div>`}).join("");
+ q.querySelectorAll(".x").forEach(b=>b.onclick=()=>{S.files.splice(+b.dataset.i,1);renderAll()})}
+function renderSide(){const s=$("#side");$("#sh").textContent={convert:"Convert to",extract:"Extract to ISO / BIN",verify:"Verify integrity",info:"Inspect files"}[S.mode];let h="";
+ if(S.mode=="convert"){const L=S.files.map(f=>SUG[(f.plat||"").split(" ")[0]]).filter(Boolean),sug=new Set(L.length?L.reduce((a,b)=>a.filter(x=>b.includes(x))):[]);
+  h+=`<div class="fmts">${Object.entries(FMT).map(([k,v])=>`<button class="fmt ${S.target==k?"on":""} ${sug.has(k)?"sug":""}" data-t="${k}"><b>${v[0]}</b><span>${v[1]}</span></button>`).join("")}</div>`;
+  if(S.target=="wbfs")h+=`<label class="f">WBFS mode</label><div class="seg" data-seg="wbfs">${["auto","scrub","game","full"].map(v=>`<button class="${S.o.wbfs==v?"on":""}" data-v="${v}">${v}</button>`).join("")}</div>
+   <label class="f">Wii common key <span style="opacity:.7">(memory only)</span></label><input type="password" id="key" placeholder="32 hex characters" value="${esc(S.o.key)}" autocomplete="off">
+   <label class="chk"><input type="checkbox" id="split" ${S.o.split?"checked":""}>Split at 4 GB (FAT32)</label><div class="note">Scrub removes unused clusters. Without a key it falls back to “game”.</div>`;
+  if(["cso","gcz"].includes(S.target))h+=`<label class="f">Compression level · <b id="lv">${S.o.level}</b></label><input type="range" min="1" max="9" value="${S.o.level}" id="level" style="width:100%;accent-color:var(--acc)">`;
+  if(S.target=="chd")h+=`<label class="f">ISO input as</label><div class="seg" data-seg="iso">${["auto","dvd","cd"].map(v=>`<button class="${S.o.iso==v?"on":""}" data-v="${v}">${v}</button>`).join("")}</div>`;
+  if(S.target=="zso")h+=`<div class="note">ZSO is much faster with <code>pip install lz4</code>.</div>`}
+ h+=`<label class="f">Output folder</label><input type="text" id="out" placeholder="Same folder as source" value="${esc(S.o.out)}">`;
+ if(S.mode=="convert")h+=`<label class="chk"><input type="checkbox" id="vf" ${S.o.verify?"checked":""}>Verify after converting</label>`;
+ if(["convert","extract"].includes(S.mode))h+=`<label class="chk"><input type="checkbox" id="fc" ${S.o.force?"checked":""}>Overwrite existing files</label>`;
+ s.innerHTML=h;
+ s.querySelectorAll(".fmt").forEach(b=>b.onclick=()=>{S.target=b.dataset.t;renderAll()});
+ s.querySelectorAll("[data-seg] button").forEach(b=>b.onclick=()=>{S.o[b.parentElement.dataset.seg]=b.dataset.v;renderSide()});
+ const on=(id,fn)=>{const e=$(id);if(e)e.oninput=fn};on("#key",e=>S.o.key=e.target.value);on("#out",e=>S.o.out=e.target.value);
+ on("#level",e=>{S.o.level=+e.target.value;$("#lv").textContent=S.o.level});on("#split",e=>S.o.split=e.target.checked);on("#vf",e=>S.o.verify=e.target.checked);on("#fc",e=>S.o.force=e.target.checked);
+ $("#go").textContent=S.running?"Working…":`Start${S.files.length?` · ${S.files.length} file${S.files.length>1?"s":""}`:""}`;$("#go").disabled=S.running||!S.files.length;$("#stop").disabled=!S.running}
+function renderAll(){renderModes();renderQueue();renderSide()}
+// ---- file browser ----
+async function openBrowser(dir=false){B.dir=dir;B.sel=new Set();$("#modal").classList.add("show");await ls(B.path)}
+async function ls(p){try{const r=await api("ls?mode="+S.mode+"&path="+encodeURIComponent(p||""));B.path=r.path;B.parent=r.parent;B.entries=r.entries;$("#path").value=r.path;drawLs()}catch(e){log("Cannot open folder: "+e.message,"e")}}
+function drawLs(){$("#ls").innerHTML=B.entries.map((e,i)=>`<div class="it" data-i="${i}"><span class="ic">${e.dir?"📁":(B.sel.has(e.path)?"☑":"☐")}</span><span>${esc(e.name)}</span>${e.plat&&e.plat!="Unknown"?`<span class="pl">${esc(e.plat)}</span>`:""}<span class="sz">${e.dir?"":human(e.size)}</span></div>`).join("")||'<div class="empty" style="border:0">No supported files here</div>';
+ $("#sel").textContent=B.sel.size+" selected";
+ $("#ls").querySelectorAll(".it").forEach(el=>{const e=B.entries[+el.dataset.i];el.onclick=()=>{if(e.dir){if(B.dir)B.sel=new Set([e.path]);ls(e.path)}else{B.sel.has(e.path)?B.sel.delete(e.path):B.sel.add(e.path);drawLs()}}})}
+$("#up").onclick=()=>ls(B.parent);$("#goto").onclick=()=>ls($("#path").value);$("#path").onkeydown=e=>{if(e.key=="Enter")ls(e.target.value)};
+$("#cx").onclick=()=>$("#modal").classList.remove("show");
+$("#ok").onclick=async()=>{const add=B.entries.filter(e=>B.sel.has(e.path));if(B.dir&&!add.length)add.push(...B.entries.filter(e=>!e.dir));
+ for(const e of add)if(!S.files.some(f=>f.path==e.path))S.files.push(e);$("#modal").classList.remove("show");renderAll()};
+$("#addf").onclick=()=>openBrowser();$("#addd").onclick=()=>openBrowser(true);$("#clr").onclick=()=>{if(!S.running){S.files=[];S.jobs={};renderAll()}};
+// ---- run ----
+async function start(){S.running=true;S.jobs={};$("#log").innerHTML="";renderAll();
+ try{await api("start",{files:S.files.map(f=>f.path),mode:S.mode,target:S.target,out:S.o.out,force:S.o.force,opts:{level:S.o.level,wbfs_mode:S.o.wbfs=="auto"?null:S.o.wbfs,split:S.o.split,iso_mode:S.o.iso,verify:S.o.verify,key:S.o.key}});S.seen=0;poll()}
+ catch(e){log("Could not start: "+e.message,"e");S.running=false;renderAll()}}
+async function poll(){try{const r=await api("state");S.jobs=r.jobs;r.log.slice(S.seen).forEach(l=>log(l.m,l.c));S.seen=r.log.length;S.running=r.running;
+  $("#ovb").style.width=r.overall*100+"%";$("#stat").textContent=r.running?`Working · ${Math.round(r.overall*100)}%`:"Done";renderQueue();renderSide()}catch(e){log("Lost connection: "+e.message,"e");S.running=false;renderAll();return}
+ if(S.running)setTimeout(poll,400)}
+$("#go").onclick=start;$("#stop").onclick=()=>api("cancel",{}).catch(()=>{});
+// ---- demo mode (no backend) ----
+if(DEMO){$("#demo").hidden=false;const D=[["Gran Turismo 4.iso","PS2",4.2e9],["God of War – Chains of Olympus.iso","PSP",1.4e9],["Super Mario Galaxy.iso","Wii",4.7e9],["Metroid Prime.iso","GameCube",1.46e9],["Final Fantasy VII (Disc 1).cue","PS1",7.3e8]];
+ const dd=(a,b)=>({path:"/games/"+a[0],name:a[0],dir:false,size:a[2],plat:a[1]});
+ window.fetch=async(u,o)=>{const p=u.split("?")[0].slice(5),ok=j=>({ok:true,json:async()=>j});
+  if(p=="ls")return ok({path:"/games",parent:"/",entries:D.map(dd)});
+  if(p=="start"){const b=JSON.parse(o.body);S._t=0;S._f=b.files;S._m=b.mode;return ok({})}
+  if(p=="cancel"){S._f=[];return ok({})}
+  if(p=="state"){S._t+=.07;const n=S._f.length,jobs={};let all=0;S._f.forEach((f,i)=>{const x=Math.min(1,Math.max(0,S._t*n-i));all+=x/n;jobs[f]=x>=1?{state:"done",frac:1,msg:"✓ "+human(+S.files.find(q=>q.path==f).size)+" → "+human(S.files.find(q=>q.path==f).size*.62)}:x>0?{state:"running",frac:x,msg:Math.round(x*100)+"%"}:{msg:"Queued"}});
+   const lg=[{m:"Demo run — nothing is written",c:""}];return ok({running:all<1,overall:all,jobs,log:lg})}return ok({})};
+ S.files=D.slice(0,4).map(dd);S.target="cso";log("Preview mode: this page runs without the Python backend. Click Start to see the flow.")}
+(async()=>{if(DEMO){$("#quit").hidden=true;return}
+ try{const v=await api("ping",{});$("#ver").textContent="v"+v.version;setInterval(()=>api("ping",{}).catch(()=>{}),4000)}catch(e){}
+ try{const c=await api("settings");if(c.o)Object.assign(S.o,c.o,{key:""});if(c.target&&FMT[c.target])S.target=c.target;renderAll()}catch(e){}
+ let t;const save=()=>{clearTimeout(t);t=setTimeout(()=>api("settings",{o:{...S.o,key:""},target:S.target}).catch(()=>{}),600)};
+ document.addEventListener("input",save);document.addEventListener("click",save)})();
+$("#quit").onclick=async()=>{if(S.running&&!confirm("A job is running. Quit anyway?"))return;try{await api("quit",{})}catch(e){}document.body.innerHTML='<div class="empty" style="height:100%"><b>ConsoleForge has stopped</b><span>You can close this tab.</span></div>'};
+renderAll();
+</script>
+</body>
+</html>
