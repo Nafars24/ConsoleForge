@@ -6,7 +6,7 @@ Convert, extract and verify console disc images — **CHD, CSO, ZSO, GCZ and WBF
 
 <!-- Optional: two or three sentences, in your own words, on why this exists. -->
 
-**Status: beta (0.3).** Every format the tool writes has been opened in at least one emulator by the author. The table below says exactly what has and has not been tested, and [COMPATIBILITY.md](COMPATIBILITY.md) tracks it per emulator version.
+**Status: beta (0.3.1).** Every format the tool writes has been opened in at least one emulator by the author. The table below says exactly what has and has not been tested, and [COMPATIBILITY.md](COMPATIBILITY.md) tracks it per emulator version.
 
 ## What it does
 
